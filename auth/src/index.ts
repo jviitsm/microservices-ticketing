@@ -1,13 +1,21 @@
-const express = require("express");
+import express from "express";
 import { json } from "body-parser";
 
+// Routes
+import { currentUserRouter } from "../routes/currentUser";
+import { signInRouter } from "../routes/signIn";
+import { signOutRouter } from "../routes/signOut";
+import { signUpRouter } from "../routes/signUp";
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(json());
 
-app.get("/api/users/currentuser", (req: any, res: any) => {
-  res.send("Hi there!");
+const routes = [currentUserRouter, signInRouter, signOutRouter, signUpRouter];
+
+routes.forEach((route) => {
+  app.use(route);
 });
 
 app.listen(port, () => {
