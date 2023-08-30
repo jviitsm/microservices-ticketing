@@ -1,10 +1,12 @@
 import express, { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import { RequestValidationError } from "../errors/requestValidationError";
+import { DatabaseConnectionError } from "../errors/databaseConnectionError";
 
 const router = express.Router();
 
 router.post(
-  "/api/users/signUp",
+  "/api/users/signup",
   [
     body("email").isEmail().withMessage("Email must be valid"),
     body("password")
@@ -16,10 +18,12 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      throw new RequestValidationError(errors.array());
     }
 
     const { email, password } = req.body;
+
+    throw new DatabaseConnectionError();
 
     res.status(201).json({ message: "User created successfully" });
   }
