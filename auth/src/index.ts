@@ -1,4 +1,5 @@
 import express from "express";
+import "express-async-errors";
 import { json } from "body-parser";
 import mongoose from "mongoose";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -15,9 +16,9 @@ app.use(json());
 
 const routes = [currentUserRouter, signInRouter, signOutRouter, signUpRouter];
 
-for (const route of routes) {
+routes.forEach((route) => {
   app.use(route);
-}
+});
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
@@ -30,7 +31,7 @@ const start = async () => {
     await mongoose.connect("mongodb://auth-mongo-srv:27017/auth");
     console.log("Connected to MongoDB");
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
 
   app.listen(port, () => {
