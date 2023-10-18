@@ -7,16 +7,28 @@ interface UserModel {
   _id?: string;
 }
 
-const userSchema = new Schema<UserModel>({
-  email: {
-    type: String,
-    required: true,
+const userSchema = new Schema<UserModel>(
+  {
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+      },
+      versionKey: false,
+    },
+  }
+);
 
 userSchema.pre("save", async function (done): Promise<void> {
   if (this.isModified("password")) {
